@@ -30,8 +30,8 @@
 							{{$t('node.txt21')}}
 						</view>
 					</view>
-					<view class="tbody" v-if="nodeList.length > 0">
-						<view class="tr" v-for="(item,index) in nodeList" :key="index">
+					<view class="tbody" v-if="list.length > 0">
+						<view class="tr" v-for="(item,index) in list" :key="index">
 							<view class="td">
 								<span v-if="item.type === 1">{{$t('node.txt2')}}</span>
 								<span v-if="item.type === 2">{{$t('node.txt6')}}</span>
@@ -63,8 +63,8 @@
 							{{$t('node.txt21')}}
 						</view>
 					</view>
-					<view class="tbody" v-if="macList.length > 0">
-						<view class="tr" v-for="(item,index) in macList" :key="index">
+					<view class="tbody" v-if="list.length > 0">
+						<view class="tr" v-for="(item,index) in list" :key="index">
 							<view class="td">
 								<span v-if="item.type === 1">H {{$t('order.txt9')}}</span>
 								<span v-if="item.type === 2">M {{$t('order.txt9')}}</span>
@@ -88,28 +88,35 @@
 							{{$t('node.txt21')}}
 						</view>
 						<view class="tds">
-							{{$t('order.txt5')}}
+							{{$t('order.txt26')}}
 						</view>
 						<view class="tds">
-							{{$t('order.txt3')}}
+							{{$t('order.txt3')}}(AIS)
 						</view>
-						<view class="tds">
+						<view class="tds y">
 							{{$t('order.txt6')}}
 						</view>
 					</view>
 					<view class="tbody" v-if="zyList.length > 0">
-						<view class="tr" v-for="(item,index) in teamList" :key="index">
+						<view class="tr" v-for="(item,index) in zyList" :key="index">
 							<view class="td1">
-								{{item.createdAtFormatted}}
+								{{item.start | showDate}}
 							</view>
 							<view class="tds">
-								H{{$t('order.txt9')}}
+								{{item.day}}
 							</view>
 							<view class="tds">
-								0.00
+								{{item.tokenAmt | cutOutNums}}
 							</view>
 							<view class="tds y">
-								{{$t('order.txt7')}}
+								<block v-if="item.end >= currTemp">
+									{{$t('order.txt7')}}
+								</block>
+								<block v-else>
+									<span class="btnj" v-if="stake === 0"
+										@click="unStake(index)">{{$t('order.txt8')}}</span>
+									<span class="btnj" v-if="stake === 1">{{$t('order.txt8')}}...</span>
+								</block>
 							</view>
 						</view>
 					</view>
@@ -124,22 +131,26 @@
 
 <script>
 	import {
+		BigNumber,
 		ethers
 	} from 'ethers';
 	import {
 		cutOutNum
 	} from '@/plugins/decimals';
+	import {
+		formatDate
+	} from '@/plugins/filter.js';
 	import 'wowjs/css/libs/animate.css';
 	import WOW from 'wowjs';
 	import Menu from '@/components/menu/menu.vue';
+	import aisAbi from '@/common/AIS';
 	export default {
 		components: {
 			Menu
 		},
 		data() {
 			return {
-				nodeList: [],
-				macList: [],
+				list: [],
 				zyList: [],
 				active: 0,
 				tabs: [{
@@ -154,7 +165,10 @@
 						id: 2,
 						val: this.$t("order.txt10")
 					}
-				]
+				],
+				aisContract: "0x263ab84638cc7fabdbC2c9bB598a20Ecc7d22bfE",
+				currTemp: 0,
+				stake: 0
 			}
 		},
 		filters: {
@@ -164,6 +178,10 @@
 					const end = value.slice(-6);
 					return `${start}***${end}`;
 				}
+			},
+			showDate(value) {
+				let date = new Date(value * 1000);
+				return formatDate(date, 'yyyy-MM-dd hh:mm:ss');
 			},
 			cutOutNums(num) {
 				if (num) {
@@ -180,11 +198,10 @@
 		watch: {
 			'$store.state.token': function(newData) {
 				if (newData) {
-					this.getNodeList();
-					this.getZyList()
+					this.getBills(5)
+					this.getUserInfo();
 				} else {
-					this.nodeList = [];
-					this.macList = [];
+					this.list = [];
 					this.zyList = [];
 					uni.showToast({
 						title: this.$t('common.txt22'),
@@ -199,8 +216,8 @@
 		created() {
 			const token = this.$store.state.token;
 			if (token) {
-				this.getNodeList();
-				this.getZyList()
+				this.getBills(1)
+				this.getUserInfo();
 			} else {
 				uni.showToast({
 					title: this.$t('common.txt22'),
@@ -209,6 +226,32 @@
 			}
 		},
 		methods: {
+			async getUserInfo() {
+				const accounts = await window.ethereum.request({
+					method: 'eth_requestAccounts'
+				})
+				const address = accounts[0];
+				const provider = new ethers.providers.Web3Provider(window.ethereum);
+				const aisAbiContract = new ethers.Contract(this.aisContract, aisAbi, provider);
+				let lockPower = await aisAbiContract.getUserStakings(address);
+				const currs = new Date().getTime();
+				this.currTemp = Math.floor(currs / 1000);
+				const length = lockPower.length;
+				if (length > 0) {
+					lockPower = lockPower.map(item => {
+						return {
+							...item,
+							shares: ethers.utils.formatUnits(item.shares),
+							tokenAmt: ethers.utils.formatUnits(item.tokenAmt),
+							day: item.day.toString(),
+							start: item.start.toString(),
+							end: item.end.toString()
+						};
+					});
+				}
+				this.zyList = lockPower;
+				console.log('list', lockPower)
+			},
 			getTabs() {
 				this.tabs = [{
 						id: 0,
@@ -227,25 +270,26 @@
 			changeTab(index) {
 				this.active = index;
 				if (index === 0) {
-					this.getNodeList()
+					this.getBills(1)
 				} else if (index === 1) {
-					this.getMacList()
+					this.getBills(2)
 				} else if (index === 2) {
-					this.getZyList()
+					this.getUserInfo()
 				}
 			},
-			async getNodeList() {
+			async getBills(type) {
 				const accounts = await window.ethereum.request({
 					method: 'eth_requestAccounts'
 				})
 				const data = {
+					type: type,
 					address: accounts[0],
 					page: 1,
 					pageSize: 100
 				}
-				this.$apiFun.getNodeInfo(data).then(res => {
+				this.$apiFun.getPowerInfo(data).then(res => {
 					if (res.code == 200) {
-						this.nodeList = res.data;
+						this.list = res.data;
 					}
 				});
 			},
@@ -264,8 +308,38 @@
 					}
 				});
 			},
-			async getZyList() {
-
+			async unStake(index) {
+				this.stake = 1;
+				const accounts = await window.ethereum.request({
+					method: 'eth_requestAccounts'
+				})
+				const provider = new ethers.providers.Web3Provider(window.ethereum);
+				const signer = provider.getSigner(accounts[0]);
+				const abiContract = new ethers.Contract(this.aisContract, aisAbi, signer);
+				const that = this;
+				try {
+					const Tx = await abiContract.removeStaking(index);
+					if (Tx.hash) {
+						that.stake = 0;
+						uni.showToast({
+							title: that.$t("order.txt27"),
+							icon: 'success'
+						})
+					} else {
+						that.stake = 0;
+						uni.showToast({
+							title: that.$t("order.txt28"),
+							icon: 'error'
+						})
+					}
+				} catch (error) {
+					console.log('err', error)
+					that.stake = 0;
+					uni.showToast({
+						title: that.$t("order.txt28"),
+						icon: 'error'
+					})
+				}
 			},
 			back() {
 				let canNavBack = getCurrentPages();
@@ -381,7 +455,7 @@
 	}
 
 	.tds {
-		width: 20%;
+		width: 23.3%;
 		text-align: center;
 	}
 
@@ -392,5 +466,13 @@
 
 	.y {
 		color: #EEA32C;
+		text-align: center;
+	}
+
+	.btnj {
+		background-color: #EEA32C;
+		color: #fff;
+		padding: 10rpx 20rpx;
+		border-radius: 10rpx;
 	}
 </style>

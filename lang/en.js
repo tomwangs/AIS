@@ -131,7 +131,7 @@ module.exports = {
 		txt20: "Total accumulated power"
 	},
 	order: {
-		txt1: "Order",
+		txt1: "Records",
 		txt2: "Node",
 		txt3: "Amount",
 		txt4: "Machine",
@@ -156,6 +156,9 @@ module.exports = {
 		txt23: "Pledge Notes",
 		txt25: "Locked Power",
 		txt24: "1. The pledge will be automatically redeemed after the full period. After redemption, the computing power will disappear and you need to pledge again",
+		txt26: "Days",
+		txt27: "Release successful",
+		txt28: "Release failed"
 	},
 	oth: {
 		txt1: "Order record",

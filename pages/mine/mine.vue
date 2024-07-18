@@ -174,7 +174,7 @@
 		data() {
 			return {
 				aisContract: "0xA7Cc5BF48DdeE519A4391400eFcC4dD407973087",
-				share: 'https://aiscm.cc?inviter=',
+				share: 'https://test.aiscm.cc?inviter=',
 				teamList: [],
 				nodeLv: 0,
 				power: 0,
@@ -211,7 +211,7 @@
 					this.getTeams()
 				} else {
 					this.teamList = [];
-					this.share = "https://aiscm.cc?inviter=";
+					this.share = "https://test.aiscm.cc?inviter=";
 					this.nodeLv = 0;
 					this.power = 0;
 					uni.showToast({
@@ -229,7 +229,7 @@
 				this.getTeams();
 				this.getHeaps()
 			} else {
-				this.share = 'https://aiscm.cc?inviter=';
+				this.share = 'https://test.aiscm.cc?inviter=';
 				uni.showToast({
 					title: this.$t('common.txt22'),
 					icon: 'error'
@@ -330,7 +330,7 @@
 					method: 'eth_requestAccounts'
 				})
 				const address = accounts[0];
-				this.share = 'https://aiscm.cc?inviter=' + address;
+				this.share = 'https://test.aiscm.cc?inviter=' + address;
 			},
 			async getTeams() {
 				const accounts = await window.ethereum.request({

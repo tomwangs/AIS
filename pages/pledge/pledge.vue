@@ -212,12 +212,9 @@
 						totalSumPower += parseFloat(ethers.utils.formatUnits(String(lockPower[i].shares), 'ether'));
 						totalSumAis += parseFloat(ethers.utils.formatUnits(String(lockPower[i].tokenAmt), 'ether'));
 					}
-					console.log('totalSumPower', totalSumPower)
-					console.log('totalSumAis', totalSumAis)
 					this.lockPowers = totalSumPower;
 					this.lockAis = totalSumAis;
 				}
-				console.log('lockPower', lockPower)
 			},
 			async checkGrantNumber() {
 				const accounts = await window.ethereum.request({
@@ -324,7 +321,7 @@
 				const accounts = await window.ethereum.request({
 					method: 'eth_requestAccounts'
 				})
-				const amount = ethers.utils.parseUnits(String(this.amount), 'ether');;
+				const amount = ethers.utils.parseUnits(String(this.amount), 'ether');
 				const provider = new ethers.providers.Web3Provider(window.ethereum);
 				const signer = provider.getSigner(accounts[0]);
 				const abiContract = new ethers.Contract(this.aisContract, aisAbi, signer);
