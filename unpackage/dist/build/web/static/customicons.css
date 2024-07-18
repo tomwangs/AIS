@@ -1,0 +1,45 @@
+@font-face {
+	font-family: "Light";
+	src: url('/static/fonts/Manrope-Light.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: "Medium";
+	src: url('/static/fonts/Manrope-Medium.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: "Regular";
+	src: url('/static/fonts/Manrope-Regular.ttf') format('truetype');
+}
+
+
+@font-face {
+	font-family: "Bold";
+	src: url('/static/fonts/Manrope-Bold.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: "ZenDots";
+	src: url('/static/fonts/ZenDots-Regular.ttf') format('truetype');
+}
+
+.Bold {
+	font-family: "Manrope-Bold" !important;
+}
+
+.Light {
+	font-family: "Manrope-Light" !important;
+}
+
+.Medium {
+	font-family: "Manrope-Medium" !important;
+}
+
+.Regular {
+	font-family: "Manrope-Regular" !important;
+}
+
+.ZenDots {
+	font-family: "ZenDots-Regular" !important;
+}

@@ -1,0 +1,85 @@
+{
+	"pages": [{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "AIS"
+			}
+		},
+		{
+			"path": "pages/node/node",
+			"style": {
+				"navigationBarTitleText": "AIS"
+			}
+		},
+		{
+			"path": "pages/team/team",
+			"style": {
+				"navigationBarTitleText": "AIS"
+			}
+		},
+		{
+			"path": "pages/machine/machine",
+			"style": {
+				"navigationBarTitleText": "AIS"
+			}
+		},
+		{
+			"path": "pages/mine/mine",
+			"style": {
+				"navigationBarTitleText": "AIS"
+			}
+		},
+		{
+			"path": "pages/pbills/pbills",
+			"style": {
+				"navigationBarTitleText": "AIS"
+			}
+		},
+		{
+			"path": "pages/market/market",
+			"style": {
+				"navigationBarTitleText": "AIS"
+			}
+		},
+		{
+			"path": "pages/order/order",
+			"style": {
+				"navigationBarTitleText": "AIS"
+			}
+		},
+		{
+			"path": "pages/pledge/pledge",
+			"style": {
+				"navigationBarTitleText": "AIS"
+			}
+		},
+		{
+			"path": "pages/sell/sell",
+			"style": {
+				"navigationBarTitleText": "AIS"
+			}
+		},
+		{
+			"path": "pages/sbills/sbills",
+			"style": {
+				"navigationBarTitleText": "AIS"
+			}
+		},
+		{
+			"path": "pages/rbills/rbills",
+			"style": {
+				"navigationBarTitleText": "AIS"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "AIS",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8",
+		"navigationStyle": "custom",
+		"app-plus": {
+			"background": "#efeff4"
+		}
+	}
+}
