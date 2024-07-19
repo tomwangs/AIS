@@ -270,8 +270,10 @@
 			changeTab(index) {
 				this.active = index;
 				if (index === 0) {
+					this.list = [];
 					this.getBills(1)
 				} else if (index === 1) {
+					this.list = [];
 					this.getBills(2)
 				} else if (index === 2) {
 					this.getUserInfo()
